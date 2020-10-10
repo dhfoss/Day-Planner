@@ -1,49 +1,13 @@
 $(document).ready(function() {
 
-
-    
-    // $('#currentDay').text(currentTimeString);
-
-
-    // setInterval(function() {
-    //     var m = moment();
-    //     var currentHour = m.hour();
-    //     console.log(currentHour);
-    //     $('#currentDay').text(m.format('dddd[, ]' + 'Do[ of ]' + 'MMMM'));
-    //     $('#currentTime').text(m.format('LT'));
-    //     $(function() {
-    //         $('textarea').each(function() {
-    //             var hour = $(this).attr('value');
-    //             console.log(hour);
-    //             if (hour < currentHour) {
-    //                 $(this).removeClass('bg-danger');
-    //                 $(this).removeClass('bg-success');
-    //             }
-    //             if (hour == currentHour) {
-    //                 $(this).addClass('bg-danger');
-    //                 $(this).removeClass('bg-success');
-    //             }
-    //             if (hour > currentHour) {
-    //                 $(this).removeClass('bg-danger');
-    //                 $(this).addClass('bg-success');
-    //             }
-    //         });
-    //     });
-    
-        
-        
-    // }, 1000);
-
-
     $(function() {
-
+        // Sets the date, time, and hour block.  This way the user does not have to wait a second for everything to load
         m = moment();
         var currentHour = m.hour();
         $('#currentDay').text(m.format('dddd[, ]' + 'Do[ of ]' + 'MMMM'));
         $('#currentTime').text(m.format('LT'));
         $('textarea').each(function() {
             var hour = $(this).attr('value');
-            console.log(hour);
             if (hour < currentHour) {
                 $(this).removeClass('bg-danger');
                 $(this).removeClass('bg-success');
@@ -58,7 +22,7 @@ $(document).ready(function() {
             }
         });
 
-        
+        // Same as above, but it updates itself every second
         setInterval(function() {
             var m = moment();
             var currentHour = m.hour();
@@ -67,7 +31,6 @@ $(document).ready(function() {
             $(function() {
                 $('textarea').each(function() {
                     var hour = $(this).attr('value');
-                    console.log(hour);
                     if (hour < currentHour) {
                         $(this).removeClass('bg-danger');
                         $(this).removeClass('bg-success');
@@ -81,48 +44,30 @@ $(document).ready(function() {
                         $(this).addClass('bg-success');
                     }
                 });
-            });
-        
-            
-            
+            });            
         }, 1000);
-    
     });
 
+    // Set click listener to class .input-group
+    $(".input-group").on('click', function(e) {
+        if ($(e.target).is('button')) {
+            var entryObject =  {
+                note: $(this).children('textarea').val().trim(),
+                hour: $(this).children('textarea').attr('value')
+            }
+            entryObjectString = JSON.stringify(entryObject);
+            localStorage.setItem(entryObject.hour + ' Saved Entry', entryObjectString);
+        }
+    })
 
-
-
-
-
-
-
-    // console.log($('#test').attr('value'));
-
-    // m = moment();
-
-    // console.log(m.hour());
-
-//     setInterval (
-//         m = moment(),
-//         currentTimeString = m.toString();
-//         $('#currentDay').text(currentTimeString),
-//         1000)
-    
-
-
-// updateCurrentTime();
-
-
-
-
-
-
-
-
-    
+    $(function() {
+        for (i = 6; i < 19; i++) {
+            var entryObjectString = localStorage.getItem(i + ' Saved Entry')
+            if (!entryObjectString) {            
+            } else {
+                var entryObject = JSON.parse(entryObjectString);
+                $("textarea[value~=" + i + "]").val(entryObject.note);
+            }
+        }
+    })    
 });
-
-
-
-
-
