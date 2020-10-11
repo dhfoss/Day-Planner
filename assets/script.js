@@ -34,7 +34,7 @@ $(document).ready(function() {
     // This controls the save buttons.  If there is a note in the block, it will save to local storage.
     // If there is nothing in the block, it will remove the local storage.
     $(".input-group").on('click', function(e) {
-        if ($(e.target).is('button')) {
+        if ($(e.target).is('button') || $(e.target).is('i')) {
             if (!$(this).children('textarea').val().trim()) {
                 localStorage.removeItem($(this).children('textarea').attr('value') + ' Saved Entry');
                 $(this).children('textarea').val('');
