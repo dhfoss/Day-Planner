@@ -1,7 +1,6 @@
 $(document).ready(function() {
-
-    $(function() {
-        // Sets the date, time, and hour block.  This way the user does not have to wait a second for everything to load
+    // Function that gets the current time from moment.js, and updates the Scheduler
+    function setTime() {
         m = moment();
         var currentHour = m.hour();
         $('#currentDay').text(m.format('dddd[, ]' + 'Do[ of ]' + 'MMMM'));
@@ -21,53 +20,39 @@ $(document).ready(function() {
                 $(this).addClass('bg-success');
             }
         });
+    }
 
-        // Same as above, but it updates itself every second
-        setInterval(function() {
-            var m = moment();
-            var currentHour = m.hour();
-            $('#currentDay').text(m.format('dddd[, ]' + 'Do[ of ]' + 'MMMM'));
-            $('#currentTime').text(m.format('LT'));
-            $(function() {
-                $('textarea').each(function() {
-                    var hour = $(this).attr('value');
-                    if (hour < currentHour) {
-                        $(this).removeClass('bg-danger');
-                        $(this).removeClass('bg-success');
-                    }
-                    if (hour == currentHour) {
-                        $(this).addClass('bg-danger');
-                        $(this).removeClass('bg-success');
-                    }
-                    if (hour > currentHour) {
-                        $(this).removeClass('bg-danger');
-                        $(this).addClass('bg-success');
-                    }
-                });
-            });            
-        }, 1000);
-    });
+    // This loop will check local storage for any notes, and print them in their respective time blocks
+    for (i = 6; i < 19; i++) {
+        var entryObjectString = localStorage.getItem(i + ' Saved Entry')
+        if (entryObjectString) {            
+            var entryObject = JSON.parse(entryObjectString);
+            $("textarea[value~=" + i + "]").val(entryObject.note);
+        }
+    }
 
-    // Set click listener to class .input-group
+    // This controls the save buttons.  If there is a note in the block, it will save to local storage.
+    // If there is nothing in the block, it will remove the local storage.
     $(".input-group").on('click', function(e) {
         if ($(e.target).is('button')) {
-            var entryObject =  {
-                note: $(this).children('textarea').val().trim(),
-                hour: $(this).children('textarea').attr('value')
+            if (!$(this).children('textarea').val().trim()) {
+                localStorage.removeItem($(this).children('textarea').attr('value') + ' Saved Entry');
+                $(this).children('textarea').val('');
+            } else {
+                var entryObject =  {
+                    note: $(this).children('textarea').val().trim(),
+                    hour: $(this).children('textarea').attr('value')
+                }
+                entryObjectString = JSON.stringify(entryObject);
+                localStorage.setItem(entryObject.hour + ' Saved Entry', entryObjectString);
             }
-            entryObjectString = JSON.stringify(entryObject);
-            localStorage.setItem(entryObject.hour + ' Saved Entry', entryObjectString);
         }
     })
 
-    $(function() {
-        for (i = 6; i < 19; i++) {
-            var entryObjectString = localStorage.getItem(i + ' Saved Entry')
-            if (!entryObjectString) {            
-            } else {
-                var entryObject = JSON.parse(entryObjectString);
-                $("textarea[value~=" + i + "]").val(entryObject.note);
-            }
-        }
-    })    
+    // This section calls the setTime function, once as the page is loaded, and once every second in order to update the scheduler in real time.
+    // setTime is called immediately so there is no 1 second delay in updating the time.
+    setTime();
+    setInterval(function() {
+        setTime();
+    }, 1000);
 });
