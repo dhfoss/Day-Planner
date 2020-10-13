@@ -31,15 +31,14 @@ $(document).ready(function() {
         }
     }
 
-    // The save icon unlocks if user types anything into input area, except for the 'tab' and 'shift' key.
-    // The 'tab' key is ignored because that brings the user to the next area without changing the entry.
-    // The 'shift' key is ignored because it doesn't change the input value.
+    // The save icon unlocks if user types anything into input area.
+    // The lock will only unlock if the entry is a number, letter, punctuation, or space.
     $('textarea').on('keydown', function(e) {
-        if (e.keyCode != 9 && e.keyCode != 16) {
+        if (e.keyCode == 8 || e.keyCode == 32 || (48 <= e.keyCode && e.keyCode <= 57 ) || (65 <= e.keyCode && e.keyCode <= 90) || (186 <= e.keyCode && e.keyCode <= 192) || (219 <= e.keyCode && e.keyCode <= 222)) {
             ($(this).next().children().children().attr('class', 'fas fa-lock-open fa-lg'));
         }
     });
-
+    
     // The save icon locks if the user clicks the lock
     $('button').on('click', function() {
         $(this).children('i').attr('class', 'fas fa-lock fa-lg');
