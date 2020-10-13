@@ -31,6 +31,20 @@ $(document).ready(function() {
         }
     }
 
+    // The save icon unlocks if user types anything into input area, except for the 'tab' and 'shift' key.
+    // The 'tab' key is ignored because that brings the user to the next area without changing the entry.
+    // The 'shift' key is ignored because it doesn't change the input value.
+    $('textarea').on('keydown', function(e) {
+        if (e.keyCode != 9 && e.keyCode != 16) {
+            ($(this).next().children().children().attr('class', 'fas fa-lock-open fa-lg'));
+        }
+    });
+
+    // The save icon locks if the user clicks the lock
+    $('button').on('click', function() {
+        $(this).children('i').attr('class', 'fas fa-lock fa-lg');
+    });
+
     // This controls the save buttons.  If there is a note in the block, it will save to local storage.
     // If there is nothing in the block, it will remove the local storage.
     $(".input-group").on('click', function(e) {
